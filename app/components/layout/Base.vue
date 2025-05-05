@@ -4,8 +4,9 @@
         v-model:collapsed="collapsed" 
         breakpoint="lg"
         collapsed-width="0"
+        width="220px"
       >
-        <div class="text-center text-white p-2 text-lg text-red-500" >
+        <div class="text-center text-white p-2 text-lg " >
             LOGO
         </div>
         <LayoutMenu :items="props.menu"></LayoutMenu>
@@ -29,10 +30,10 @@
                 <div class=" flex items-center">
                     <div >
                         <a-dropdown >
-                            <div class="h-[30px] leading-[30px]">{{ useAdmin().value?.username }}</div>
+                            <div class="h-[30px] leading-[30px]">{{ useAdmin().value?.username ?? 'Admin'}}</div>
                             <template #overlay>
                                 <a-menu>
-                                    <a-menu-item @click="singOut">
+                                    <a-menu-item @click="()=>singOut()">
                                         <a href="javascript:;">退出</a>
                                     </a-menu-item>
                                 </a-menu>

@@ -1,5 +1,5 @@
 import { defineComponent, ref } from 'vue'
-import { AForm, AFormItem, AInput, AButton, ATable, ASelect, APagination, ARangePicker } from '#components'
+import { AForm, AFormItem, AInput, AButton, ATable, ASelect, APagination, ARangePicker, RedoOutlined } from '#components'
 import type { TableColumnType } from 'ant-design-vue'
 import dayjs from 'dayjs'
 
@@ -46,10 +46,10 @@ let dateRange = defineComponent({
 
 const FormItems = {
     input:(form:any,item:TableFormItemType)=>{
-        return <AInput size="middle" v-model:value={form[item.key]} placeholder={`please input ${item.label}`}></AInput>
+        return <AInput size="middle" v-model:value={form[item.key]} placeholder={`请输入 ${item.label}`}></AInput>
     },
     select:(form:any,item:TableFormItemType)=>{
-        return <ASelect allowClear class="min-w-[150px]" v-model:value={form[item.key]} options={item.bind.options} placeholder={`please select ${item.label}`}></ASelect>
+        return <ASelect allowClear class="min-w-[150px]" v-model:value={form[item.key]} options={item.bind?.options} placeholder={`please select ${item.label}`}></ASelect>
     },
     dateRange:(form:any,item:TableFormItemType)=>{
         
@@ -58,18 +58,21 @@ const FormItems = {
 }
 
 export type TablePropsType = {
-  form: TableFormItemType[]
+  form?: TableFormItemType[]
   action?: {
     search?: boolean
     reset?: boolean
     export?: boolean
     opther: () => any
   }
-  'v-slots'?:any
   table: {
+    'v-slots'?:any
     enableSelection?: boolean
     columns: TableColumnType[]
     data: () => any[]
+  },
+  footerOptions?: {
+    show: boolean
   }
 }
 
@@ -83,7 +86,20 @@ export type AttributeType = {
 export const FormTableProps = {
     form: {
       type: Array as () => TableFormItemType[],
-      required: true
+      required: false
+    },
+    formOptions:{
+      type:Object as () => {
+        search:boolean,
+        reset:boolean,
+        export:boolean,
+        opther?:()=>any
+      },
+      default:()=>({
+        search:true,
+        reset:true,
+        export:false,
+      })
     },
     action: {
       type: Object as () => TablePropsType['action'],
@@ -103,9 +119,21 @@ export const FormTableProps = {
         rowKey:(row:any)=>any
       })
     },
+    footerOptions: {
+      type: Object as () => {
+        show: boolean,
+      },
+      default: () => ({
+        show: true,
+      })
+    },
     attribute:{
-        type:Object as ()=> AttributeType
-    }
+      type:Object as ()=> AttributeType
+    },
+    control:{
+      type:Object,
+      required:true
+    },
   }
 
 export default defineComponent({
@@ -113,13 +141,17 @@ export default defineComponent({
   props: FormTableProps,
   setup(props) {
 
+    const form = ref({})
+    props.form?.forEach((item) => {
+      form.value[item.key] = item.value?? ''
+    })
+    const metaForm = JSON.parse(JSON.stringify(form.value))
     let pagination =reactive({
       page:1,
       pageSize:20,
       total:0
     })
 
-    const form = ref({})
 
     const tableData = asyncReactive<any[]>(async ()=>{
         let res = await props.table.data({...form.value,...pagination})
@@ -128,7 +160,7 @@ export default defineComponent({
             list:res,
             meta:{
               pagination:{
-                total:res.length,
+                total:0,
                 per_page:pagination.pageSize,
                 current_page:pagination.page
               }
@@ -140,6 +172,7 @@ export default defineComponent({
         pagination.pageSize = res.meta.pagination.per_page
         pagination.page = res.meta.pagination.current_page
         console.log(res)
+        props.attribute.tableData = res.list
         return res.list
     },[])
 
@@ -151,11 +184,13 @@ export default defineComponent({
             props.attribute!.selectItems.splice(0,props.attribute!.selectItems.length,...rows)
         } 
     }
+
+    props.control.refresh = ()=>tableData.load()
     
 
     return () => (
       <div class="flex flex-col gap-2 h-full  ">
-        {JSON.stringify(form.value)}
+        {/* {JSON.stringify(form.value)} */}
         {props.form&&<AForm layout="inline gap-2">
             {props.form?.map((item) => {
               form[item.key] = item.value?? ''
@@ -167,9 +202,9 @@ export default defineComponent({
               )
             })}
             <div class="flex gap-2">
-                {props.action.search && <AButton type="primary" onClick={()=>tableData.load()}>搜索</AButton>}
-                {props.action.reset && <AButton>重置</AButton>}
-                {props.action.export && <AButton type="primary">导出</AButton>}
+                {props.formOptions.search && <AButton type="primary" onClick={()=>tableData.load()}>搜索</AButton>}
+            {props.formOptions.reset && <AButton onClick={() => patch(metaForm,form.value)}>重置</AButton>}
+                {props.formOptions.export && <AButton type="primary">导出</AButton>}
             </div> 
         </AForm>}
 
@@ -216,15 +251,32 @@ export default defineComponent({
                 dataSource={tableData.value}
             />
         </div>
-        <div class="mt-3 flex items-center justify-between">
+       {props.footerOptions.show && <div class="mt-3 flex items-center justify-between">
           <div>
             { props.table.enableSelection && (`选中项: ${props.attribute.selectKeys.length}`)}
           </div>
-          <APagination v-model:current={pagination.page} onChange={(page) => {
-            pagination.page = page
-            tableData.load()
-          }} total={pagination.total} />
-        </div>
+          <div class="flex items-center gap-2">
+            <APagination 
+            hideOnSinglePage={true}
+              v-model:current={pagination.page}
+              total={pagination.total} 
+              pageSize={pagination.pageSize}
+              onChange={(page) => {
+                pagination.page = page
+                tableData.load()
+              }} 
+              pageSizeOptions={['20','50','100']}
+              onShowSizeChange={(current, size) => {
+                pagination.pageSize = size
+                pagination.page = current
+                tableData.load()
+              }}
+            />
+
+            <AButton icon={h(RedoOutlined)} loading={tableData.loading} onClick={tableData.load}  />
+          </div>
+
+        </div>}
 
       </div>
     )
