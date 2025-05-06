@@ -129,12 +129,13 @@ export const MModal = {
 
 export const Confirm = {
     delete: () => {
+        const { t: $t } = useI18n()
         return new Promise((resolve, reject) => {
             Modal.confirm({
-                title: '确认删除',
-                content: '确认删除该条数据吗？',
-                okText: '确定',
-                cancelText: '取消',
+                title: $t('确认删除'),
+                content: $t('确认删除该条数据吗？'),
+                okText: $t('确定'),
+                cancelText: $t('取消'),
                 onOk: () => {
                     resolve(true)
                 },

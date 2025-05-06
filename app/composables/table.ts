@@ -15,9 +15,9 @@ export const FormTable = (props: TablePropsType) => {
     const control = {
         refresh: () => { }
     }
-
+    console.log({ ...props, attribute, control })
     return {
-        com: h(FormTableCom, { ...props, attribute, control }),
+        com: h(FormTableCom, { ...props, attribute, control }, props['v-slots']),
         attribute,
         control
     }
@@ -31,4 +31,10 @@ export const TablePage = (props: TablePropsType) => {
         com: h(ACard, { class: "absolute top-0 left-0 right-0 bottom-0 h-full", bodyStyle: "height:100%" }, TableParams.com)
 
     }
+}
+
+
+export const Table = {
+    Normal: FormTable,
+    Page: TablePage
 }

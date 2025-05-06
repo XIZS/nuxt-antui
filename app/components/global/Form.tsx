@@ -2,7 +2,8 @@ import { AForm, AFormItem, AInput, ASelect,AInputNumber, LineOutlined, ASwitch, 
 
 export type FormItemType = {
     label:string,
-    key:string|string[],
+    key: string | string[],
+    value:any,
     is:string,
     bind:any,
     rules:any[]
@@ -16,42 +17,42 @@ export type FormPropsType = {
     showSubmit?:boolean
 }
 
-const FormComs = {
+export const FormComs:{
+    [key: string]: (form:any,item:FormItemType)=>VNode
+  }= {
     input:(form:any,item:FormItemType)=>{
-        return <AInput v-model:value={form[item.key]}></AInput>
+        return <AInput v-model:value={form[item.key as string]}></AInput>
     },
     button:(form:any,item:FormItemType)=>{
         console.log(item.bind)
         return <AButton {...item.bind}>{ item.bind.content}</AButton>
     },
     textarea:(form:any,item:FormItemType)=>{
-        return <ATextarea v-model:value={form[item.key]}></ATextarea>
+        return <ATextarea v-model:value={form[item.key as string]}></ATextarea>
     },
     inputNumber:(form:any,item:FormItemType)=>{
-        return <AInputNumber v-model:value={form[item.key]} {...item.bind}></AInputNumber>
+        return <AInputNumber v-model:value={form[item.key as string]} {...item.bind}></AInputNumber>
     },
     inputNumberRange:(form:any,item:FormItemType)=>{
         return <div class="flex items-center gap-2">
-            <AInputNumber class="flex-1" v-model:value={form[item.key[0]]} {...item.bind[0]}></AInputNumber>
+            <AInputNumber class="flex-1" v-model:value={form[item.key[0] as string]} {...item.bind[0]}></AInputNumber>
             <LineOutlined />
-            <AInputNumber class="flex-1" v-model:value={form[item.key[1]]} {...item.bind[1]}></AInputNumber>
+            <AInputNumber class="flex-1" v-model:value={form[item.key[1] as string]} {...item.bind[1]}></AInputNumber>
         </div>
     },
     select:(form:any,item:FormItemType)=>{
-        return <ASelect v-model:value={form[item.key]} options={item.bind.options}></ASelect>
-    },
-    countrySelect:(form:any,item:FormItemType)=>{
-        return <ASelect v-model:value={form[item.key]} options={Const.CountrySelectList()}></ASelect>
+        return <ASelect v-model:value={form[item.key as string]} options={item.bind.options}></ASelect>
     },
     switch:(form:any,item:FormItemType)=>{
-        return <ASwitch v-model:checked={form[item.key]} {...item.bind}></ASwitch>
+        return <ASwitch v-model:checked={form[item.key as string]} {...item.bind}></ASwitch>
     },
     radio: (form: any, item: FormItemType) => {
-        return <ARadioGroup v-model:value={form[item.key]} {...item.bind}></ARadioGroup>
+        return <ARadioGroup v-model:value={form[item.key as string]} {...item.bind}></ARadioGroup>
     },
-    uploadImg: (form: any, item: FormItemType) => { 
-        return <UploadImg v-model:value={form[item.key]} {...item.bind}></UploadImg>
-    }
+
+    // uploadImg: (form: any, item: FormItemType) => { 
+    //     return <UploadImg v-model:value={form[item.key as string]} {...item.bind}></UploadImg>
+    // }
 }
 
 export default defineComponent({

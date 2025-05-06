@@ -12,11 +12,18 @@ export default defineNuxtConfig({
   future: {
     compatibilityVersion: 4
   },
-
-  modules: ['@ant-design-vue/nuxt'],
+  modules: ['@ant-design-vue/nuxt', '@nuxtjs/i18n'],
   extends: ['@xizs/nuxt-base'],
   css: [join(currentDir, './app/assets/css/main.css')],
-  vite:{
+  vite: {
     plugins: [tailwindcss()],
+  },
+  i18n: {
+    defaultLocale: 'zh',
+    strategy: 'no_prefix',
+    locales: [
+      { code: 'en', name: 'English', file: 'en.json' },
+      { code: 'zh', name: '中文', file: 'zh.json' }
+    ]
   }
 })
