@@ -132,10 +132,10 @@ export const Confirm = {
         // const { t: $t } = useI18n()
         return new Promise((resolve, reject) => {
             Modal.confirm({
-                title: ('确认删除'),
-                content: ('确认删除该条数据吗？'),
-                okText: ('确定'),
-                cancelText: ('取消'),
+                title: '确认删除',
+                content: '确认删除该条数据吗？',
+                okText: '确定',
+                cancelText: '取消',
                 onOk: () => {
                     resolve(true)
                 },
