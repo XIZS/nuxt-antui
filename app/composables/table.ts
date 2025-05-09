@@ -9,7 +9,9 @@ export const FormTable = (props: TablePropsType) => {
         selectItems: [],
         selectKeys: [],
         page: 1,
-        pageSize: 10
+        pageSize: 10,
+        tableData: [],
+        form: {}
     })
 
     const control = {
@@ -28,7 +30,7 @@ export const TablePage = (props: TablePropsType) => {
 
     return {
         ...TableParams,
-        com: h(ACard, { class: "absolute top-0 left-0 right-0 bottom-0 h-full", bodyStyle: "height:100%" }, TableParams.com)
+        com: h(ACard, { class: "absolute top-0 left-0 right-0 bottom-0 h-full", bodyStyle: { height: '100%' } }, TableParams.com)
 
     }
 }

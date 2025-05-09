@@ -84,6 +84,7 @@ export const FormModal = (params: FormModalParamsType) => {
 
     let control = NormalModal(h(defineComponent({
         setup() {
+            const { t: $t } = useI18n()
             let formRef = ref(null)
             let loading = ref(false)
 
@@ -101,16 +102,15 @@ export const FormModal = (params: FormModalParamsType) => {
             })
 
             return () => h(AModal, {
-                title: params.title,
+                title: $t(params.title),
                 width: params.width,
-                okText: '提交',
-                cancelText: '取消',
+                okText: $t('提交'),
+                cancelText: $t('取消'),
                 confirmLoading: loading.value,
                 onOk: async () => {
                     await submit()
                     control.close()
                 }
-
             }, h(Form, {
                 ref: formRef,
                 form: params.form,
@@ -129,13 +129,13 @@ export const MModal = {
 
 export const Confirm = {
     delete: () => {
-        const { t: $t } = useI18n()
+        // const { t: $t } = useI18n()
         return new Promise((resolve, reject) => {
             Modal.confirm({
-                title: $t('确认删除'),
-                content: $t('确认删除该条数据吗？'),
-                okText: $t('确定'),
-                cancelText: $t('取消'),
+                title: ('确认删除'),
+                content: ('确认删除该条数据吗？'),
+                okText: ('确定'),
+                cancelText: ('取消'),
                 onOk: () => {
                     resolve(true)
                 },

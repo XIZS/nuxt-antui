@@ -50,9 +50,6 @@ export const FormComs:{
         return <ARadioGroup v-model:value={form[item.key as string]} {...item.bind}></ARadioGroup>
     },
 
-    // uploadImg: (form: any, item: FormItemType) => { 
-    //     return <UploadImg v-model:value={form[item.key as string]} {...item.bind}></UploadImg>
-    // }
 }
 
 export default defineComponent({
@@ -78,7 +75,9 @@ export default defineComponent({
             default: () => ({})
         }
     },
-    setup(props,{expose}){
+    setup(props, { expose }) {
+        
+        const {t:$t} = useI18n()
 
         let thisRef = ref(null)
         let formData = ref(props.defaultFormData) 
@@ -125,7 +124,7 @@ export default defineComponent({
         
 
 
-        return ()=><AForm ref={thisRef} model={formData.value} rules={rules.value} label-col={{ span: 6 }} wrapper-col={{ span: 16 }}>
+        return ()=><AForm ref={thisRef} model={formData.value} rules={rules.value} label-col={{ span: 8 }} wrapper-col={{ span: 16 }}>
             {/* {JSON.stringify(formData.value)} */}
             {
                 ADParse(props.form, formData.value).map(item => {
@@ -133,7 +132,12 @@ export default defineComponent({
                         return  typeof item.is === 'function'? item.is(formData.value) :
                         FormComs[item.is](formData.value,item)
                     }
-                    return <AFormItem label={item.label} key={item.key} name={item.key} {...item.bind} class={{'hidden':item.show===false}}>
+                    return <AFormItem
+                        key={item.key} name={item.key} {...item.bind} class={{ 'hidden': item.show === false }}
+                        v-slots={{
+                            label:()=><span class="whitespace-break-spaces">{$t(item.label)}</span>
+                        }}
+                    >
                         {
                             typeof item.is === 'function'? item.is(formData.value) :
                             FormComs[item.is](formData.value,item)

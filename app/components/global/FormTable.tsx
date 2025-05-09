@@ -26,11 +26,11 @@ let dateRange = defineComponent({
       
         let value = watchRef(ref([]),(nv,ov)=>{
         if(nv?.length>0){
-            props.form[props.item.key[0]] = nv[0].format('YYYY-MM-DD 00:00:00')
-            props.form[props.item.key[1]] = nv[1].format('YYYY-MM-DD 23:59:59')
+            props.form[props.item.key[0] as string] = nv[0].format('YYYY-MM-DD 00:00:00')
+            props.form[props.item.key[1] as string] = nv[1].format('YYYY-MM-DD 23:59:59')
         }else{
-            props.form[props.item.key[0]] = ''
-            props.form[props.item.key[1]] = ''
+            props.form[props.item.key[0] as string] = ''
+            props.form[props.item.key[1] as string] = ''
         }
         })
         const rangePresets = ref([
@@ -76,7 +76,8 @@ export type TablePropsType = {
   },
   footerOptions?: {
     show: boolean
-  }
+  },
+  'v-slots'?:any
 }
 
 export type AttributeType = {
@@ -85,6 +86,7 @@ export type AttributeType = {
     page:number,
     pageSize: number,
     tableData: any[],
+    form:any
 }
 
 export const FormTableProps = {
@@ -120,7 +122,7 @@ export const FormTableProps = {
         enableSelection: false,
         columns: [],
         data: () => [],
-        rowKey:(row:any)=>any
+        rowKey:(row:any)=>{}
       })
     },
     footerOptions: {
@@ -132,10 +134,11 @@ export const FormTableProps = {
       })
     },
     attribute:{
-      type:Object as ()=> AttributeType
+        type: Object as () => AttributeType,
+        default:()=>{}
     },
     control:{
-      type:Object,
+      type:Object as () => any,
       required:true
     },
   }
@@ -146,12 +149,18 @@ export default defineComponent({
     setup(props,{slots}) {
         const {t:$t} = useI18n()
 
+        //form 初始化
         const form = ref({})
         props.form?.forEach((item) => {
             form.value[item.key] = item.value
         })
         props.attribute.form = form.value
         const metaForm = JSON.parse(JSON.stringify(form.value))
+
+        //table初始化
+        props.table.columns?.forEach((item) => {
+            item.title = $t(item.title)            
+        })
 
         let pagination =reactive({
             page:1,
@@ -161,7 +170,7 @@ export default defineComponent({
 
 
         const tableData = asyncReactive<any[]>(async ()=>{
-            let res = await props.table.data({...form.value,...pagination})
+            let res:any = await props.table.data({...form.value,...pagination})
             if(Array.isArray(res)){
                 res = {
                     list:res,
@@ -184,7 +193,7 @@ export default defineComponent({
 
         const rowSelection = { 
             selectedRowKeys: props.attribute?.selectKeys, 
-            onChange: (keys,rows)=>{ 
+            onChange: (keys:any,rows:any)=>{ 
                 props.attribute!.selectKeys.splice(0,props.attribute!.selectKeys.length,...keys)
                 props.attribute!.selectItems.splice(0,props.attribute!.selectItems.length,...rows)
             } 
@@ -216,10 +225,10 @@ export default defineComponent({
                             row-selection={props.table.enableSelection?rowSelection:null}
                             rowKey={props.table.rowKey??((row,key)=>key)}
                             loading={tableData.loading}
-                            scroll={{x: true}}
+                            // scroll={{x: true}}
                             columns={props.table.columns}
                             pagination={false}
-                            sticky={tableData.value.length>0}
+                            // sticky={tableData.value.length>0}
                             v-slots={{
                                 headerCell: ({ title,column }: any) => (
                                     <div style={{'white-space': 'nowrap'}}>
@@ -256,7 +265,7 @@ export default defineComponent({
                         pageSizeOptions={['20','50','100']}
                         onShowSizeChange={(current, size) => {
                             pagination.pageSize = size
-                            pagination.page = current
+                            pagination.page = 1
                             tableData.load()
                         }}
                         />

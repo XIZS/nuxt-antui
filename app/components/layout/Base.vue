@@ -27,7 +27,7 @@
                 <div class=" flex items-center">
                     <div >
                         <a-dropdown >
-                            <div class="h-[30px] leading-[30px]">{{ useAdmin().value?.username ?? 'Admin'}}</div>
+                            <div class="h-[30px] leading-[30px] cursor-pointer">{{ useAdmin().value?.username ?? 'Admin'}}</div>
                             <template #overlay>
                                 <a-menu>
                                     <a-menu-item @click="()=>singOut()">
