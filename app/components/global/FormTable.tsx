@@ -86,6 +86,7 @@ export type AttributeType = {
     page:number,
     pageSize: number,
     tableData: any[],
+    metaTableData:any[],
     form:any
 }
 
@@ -186,6 +187,7 @@ export default defineComponent({
             pagination.total = res.meta.pagination.total
             pagination.pageSize = res.meta.pagination.per_page
             pagination.page = res.meta.pagination.current_page
+            props.attribute.metaTableData = JSON.parse(JSON.stringify(res.list))
             props.attribute.tableData = res.list
             return res.list
         },[])
