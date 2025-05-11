@@ -1,13 +1,39 @@
-import { defineComponent, ref } from 'vue'
+import { defineComponent, h, ref } from 'vue'
 import { AForm, AFormItem, AInput, AButton, ATable, ASelect, APagination, ARangePicker, RedoOutlined } from '#components'
 import type { TableColumnType } from 'ant-design-vue'
 import dayjs from 'dayjs'
 
 type TableFormItemType = {
-  label: string
-  key: string
-  is: string
-  bind?: any
+    label: string,
+    key: string,
+    is: string,
+    bind?: any,
+    value?:any
+}
+
+export type TablePropsType = {
+  form?: TableFormItemType[]
+  table: {
+    'v-slots'?:any
+    enableSelection?: boolean
+    columns: TableColumnType[]
+    rowKey: (row: any) => any
+    data: (params:any) => any
+  },
+  footerOptions?: {
+    show: boolean
+  },
+  'v-slots'?:any
+}
+
+export type AttributeType = {
+    selectItems:any[],
+    selectKeys:any[],
+    page:number,
+    pageSize: number,
+    tableData: any[],
+    metaTableData:any[],
+    form:any
 }
 
 let dateRange = defineComponent({
@@ -45,7 +71,7 @@ let dateRange = defineComponent({
 }) 
 
 
-const FormItems = {
+const FormItems:Record<string, (form: any, item: TableFormItemType) => any> = {
     input: (form: any, item: TableFormItemType) => {
         let {t:$t} = useI18n()
         return <AInput size="middle" v-model:value={form[item.key]} placeholder={$t(`请输入{label}`,{label:$t(item.label)})}></AInput>
@@ -60,35 +86,6 @@ const FormItems = {
     }
 }
 
-export type TablePropsType = {
-  form?: TableFormItemType[]
-  action?: {
-    search?: boolean
-    reset?: boolean
-    export?: boolean
-    opther: () => any
-  }
-  table: {
-    'v-slots'?:any
-    enableSelection?: boolean
-    columns: TableColumnType[]
-    data: () => any[]
-  },
-  footerOptions?: {
-    show: boolean
-  },
-  'v-slots'?:any
-}
-
-export type AttributeType = {
-    selectItems:any[],
-    selectKeys:any[],
-    page:number,
-    pageSize: number,
-    tableData: any[],
-    metaTableData:any[],
-    form:any
-}
 
 export const FormTableProps = {
     form: {
@@ -108,15 +105,7 @@ export const FormTableProps = {
         export:false,
       })
     },
-    action: {
-      type: Object as () => TablePropsType['action'],
-      default: () => ({
-        search: true,
-        reset: true,
-        export: true,
-        opther: () => null
-      })
-    },
+
     table: {
       type: Object as () => TablePropsType['table'],
       default: () => ({
@@ -151,8 +140,9 @@ export default defineComponent({
         const {t:$t} = useI18n()
 
         //form 初始化
-        const form = ref({})
+        const form = ref<any>({})
         props.form?.forEach((item) => {
+            
             form.value[item.key] = item.value
         })
         props.attribute.form = form.value
@@ -160,7 +150,7 @@ export default defineComponent({
 
         //table初始化
         props.table.columns?.forEach((item) => {
-            item.title = $t(item.title)            
+            item.title = $t(item.title as string)            
         })
 
         let pagination =reactive({
@@ -206,13 +196,12 @@ export default defineComponent({
         return () => (
             <div class="flex flex-col gap-2 h-full  ">
                 {props.form&&<AForm layout="inline gap-2">
-                    {props.form?.map((item) => {
-                    form[item.key] = item.value?? ''
-                    return (
-                        <AFormItem label={$t(item.label)}>
-                            {FormItems[item.is](form.value,item)}
-                        </AFormItem>
-                    )
+                    {props.form?.map((item: TableFormItemType) => {
+                        return (
+                            <AFormItem label={$t(item.label)}>
+                                {FormItems[item.is]?.(form.value,item)}
+                            </AFormItem>
+                        )
                     })}
                     <div class="flex gap-2">
                         {props.formOptions.search && <AButton type="primary" onClick={()=>tableData.load()}>{$t('搜索')}</AButton>}
@@ -225,7 +214,7 @@ export default defineComponent({
                     {slots.content?.(tableData.value) ??
                         <ATable
                             row-selection={props.table.enableSelection?rowSelection:null}
-                            rowKey={props.table.rowKey??((row,key)=>key)}
+                            rowKey={props.table.rowKey??((row)=>row.id)}
                             loading={tableData.loading}
                             // scroll={{x: true}}
                             columns={props.table.columns}
@@ -237,7 +226,7 @@ export default defineComponent({
                                         {title}
                                     </div>
                                 ),
-                                bodyCell:(row)=>{
+                                bodyCell:(row:any)=>{
                                     if(row.column?.customRender!=null){
                                         return row.column.customRender(row)
                                     }
