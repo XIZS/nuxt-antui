@@ -11,24 +11,28 @@ type TableFormItemType = {
     value?:any
 }
 
-export type TablePropsType = {
-    form?: TableFormItemType[],
-    formOptions: {
-        search?: boolean,
-        reset?: boolean,
-        export: boolean,
+export type TableParamsType = {
+    form?: {
+        labels: TableFormItemType[],
+        option: {
+            search?: boolean,
+            reset?: boolean,
+            export?: boolean,
+        },
     },
     table: {
         'v-slots'?:any
         enableSelection?: boolean
         columns: TableColumnType[]
         rowKey: (row: any) => any
-        data: (params:any) => any
     },
+    data: (params: any) => any
     footerOptions?: {
         show: boolean
     },
-    'v-slots'?:any
+    'v-slots'?: {
+        content:(data:any)=>any
+    }
 }
 
 export type AttributeType = {
@@ -109,27 +113,22 @@ const FormItems:Record<string, (form: any, item: TableFormItemType) => any> = {
 
 export const FormTableProps = {
     form: {
-      type: Array as () => TableFormItemType[],
+      type: Object as () => TableParamsType['form'],
       required: false
-    },
-    formOptions:{
-      type:Object as ()=> TablePropsType['formOptions'],
-      default:()=>({
-        search:true,
-        reset:true,
-        export:false,
-      })
     },
 
     table: {
-      type: Object as () => TablePropsType['table'],
+      type: Object as () => TableParamsType['table'],
       default: () => ({
         enableSelection: false,
         columns: [],
-        data: () => [],
         rowKey:(row:any)=>{}
       })
     },
+    data: {
+        type: Object as () => TableParamsType['data']
+    },
+
     footerOptions: {
       type: Object as () => {
         show: boolean,
@@ -160,7 +159,7 @@ export default defineComponent({
 
         //form 初始化
         const form = ref<any>({})
-        props.form?.forEach((item) => {
+        props.form?.labels.forEach((item) => {
             
             if (Array.isArray(item.key)) {
                 item.key.forEach((key,index) => {
@@ -193,7 +192,7 @@ export default defineComponent({
                 _isInitLoad = true
                 return []
             }
-            let res:any = await props.table.data({...form.value,...pagination})
+            let res: any = await props.data?.({ ...form.value, ...pagination })
             if(Array.isArray(res)){
                 res = {
                     list:res,
@@ -229,8 +228,8 @@ export default defineComponent({
         return () => (
             <div class="flex flex-col gap-2 h-full  ">
                 {/* {JSON.stringify(form.value)} */}
-                {props.form&&<AForm layout="inline gap-2">
-                    {props.form?.map((item: TableFormItemType) => {
+                {props.form?.labels&&<AForm layout="inline gap-2">
+                    {props.form?.labels?.map((item: TableFormItemType) => {
                         return (
                             <AFormItem label={$t(item.label)}>
                                 {FormItems[item.is]?.(form.value,item)}
@@ -238,15 +237,14 @@ export default defineComponent({
                         )
                     })}
                     <div class="flex gap-2">
-                        {props.formOptions.search && <AButton type="primary" onClick={()=>tableData.load()}>{$t('搜索')}</AButton>}
-                        {props.formOptions.reset && <AButton onClick={() => patch(metaForm,form.value,true)}>{$t('重置')}</AButton>}
-                        {props.formOptions.export && <AButton type="primary">{$t('导出')}</AButton>}
+                        {props.form?.option?.search !== false && <AButton type="primary" onClick={()=>tableData.load()}>{$t('搜索')}</AButton>}
+                        {props.form?.option?.reset  !== false && <AButton onClick={() => patch(metaForm,form.value,true)}>{$t('重置')}</AButton>}
+                        {props.form?.option?.export !== false && <AButton type="primary">{$t('导出')}</AButton>}
                     </div> 
                 </AForm>}
                 {slots.center?.()}
                 <div class="flex-1 relative overflow-scroll flex flex-col">
-                    <div class="absolute inset-0 ">
-                        {slots.content?.(tableData.value) ??
+                    {slots.content?.(tableData.value) ??< div class="absolute inset-0 ">
                             <ATable
                                 row-selection={props.table.enableSelection ? rowSelection : null}
                                 rowKey={props.table.rowKey ?? ((row) => row.id)}
@@ -255,7 +253,6 @@ export default defineComponent({
                                 columns={props.table.columns}
                                 pagination={false}
                                 sticky={tableData.value.length>0}
-
                                 v-slots={{
                                     headerCell: ({ title, column }: any) => (
                                         <div style={{ 'white-space': 'nowrap' }}>
@@ -272,8 +269,8 @@ export default defineComponent({
                                 }}
                                 dataSource={tableData.value}
                             />
-                        }
-                    </div>
+                        </div>
+                    }
                 </div>
                 
                 {props.footerOptions.show && <div class="mt-3 flex items-center justify-between">
@@ -282,20 +279,20 @@ export default defineComponent({
                     </div>
                     <div class="flex items-center gap-2">
                         <APagination 
-                        hideOnSinglePage={true}
-                        v-model:current={pagination.page}
-                        total={pagination.total} 
-                        pageSize={pagination.pageSize}
-                        onChange={(page) => {
-                            pagination.page = page
-                            tableData.load()
-                        }} 
-                        pageSizeOptions={['20','50','100']}
-                        onShowSizeChange={(current, size) => {
-                            pagination.pageSize = size
-                            pagination.page = 1
-                            tableData.load()
-                        }}
+                            hideOnSinglePage={true}
+                            v-model:current={pagination.page}
+                            total={pagination.total} 
+                            pageSize={pagination.pageSize}
+                            onChange={(page) => {
+                                pagination.page = page
+                                tableData.load()
+                            }} 
+                            pageSizeOptions={['20','50','100']}
+                            onShowSizeChange={(current, size) => {
+                                pagination.pageSize = size
+                                pagination.page = 1
+                                tableData.load()
+                            }}
                         />
                         <AButton icon={h(RedoOutlined)} loading={tableData.loading} onClick={tableData.load}  />
                     </div>

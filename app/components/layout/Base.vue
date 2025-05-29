@@ -7,8 +7,8 @@
         width="220px"
         :trigger="null"
       >
-        <div class="text-center text-white p-2 text-lg " >
-            LOGO
+        <div class="text-center text-white p-2 text-lg  " >
+            {{props.title}}
         </div>
         <LayoutMenu :items="props.menu"></LayoutMenu>
       </a-layout-sider>
@@ -76,6 +76,7 @@ const { locales, setLocale } = useI18n()
 const collapsed = ref(false)
 
 const props = defineProps<{
+    title:string,
     menu: MenuItemType[]
 }>()
 
