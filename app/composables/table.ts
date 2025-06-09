@@ -58,6 +58,17 @@ export const TablePage = (props: TablePropsType) => {
     }
 }
 
+export const TablePage2 = (props: TableParamsType) => {
+    let TableParams = FormTable2(props)
+
+    return {
+        ...TableParams,
+        com: h(ACard, { class: "absolute top-0 left-0 right-0 bottom-0 h-full", bodyStyle: { height: '100%' } }, TableParams.com)
+
+    }
+}
+
+
 
 export const Table = {
     Normal: FormTable,

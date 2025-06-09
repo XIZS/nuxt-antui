@@ -20,8 +20,8 @@
                     <menu-unfold-outlined  v-if="collapsed" class="trigger text-[20px]" @click="() => (collapsed = !collapsed)" />
                     <menu-fold-outlined v-else class="trigger text-[20px]" @click="() => (collapsed = !collapsed)" />
                     <div class="leading-4 gap-1 flex flex-col  justify-center h-full">
-                        <div class="text-[12px] text-[#aaa]">{{routeInfo.names.join(' / ')}}</div>
-                        <div class="font-bold text-[18px]">{{routeInfo.name}}</div>
+                        <div class="text-[12px] text-[#aaa]">{{routeInfo?.names.join(' / ')}}</div>
+                        <div class="font-bold text-[18px]">{{routeInfo?.name}}</div>
                     </div>
                 </div>
                 <div class=" flex items-center">

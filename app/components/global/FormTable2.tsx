@@ -1,11 +1,12 @@
 import { defineComponent, h, ref } from 'vue'
-import { AForm, AFormItem, AInput, AButton, ATable, ASelect, APagination, ARangePicker, RedoOutlined } from '#components'
+import { AForm, AFormItem, AInput, AButton, ATable, ASelect, APagination, ARangePicker, RedoOutlined, ASwitch, AInputNumber } from '#components'
 import type { TableColumnType } from 'ant-design-vue'
 import dayjs from 'dayjs'
 
-type TableFormItemType = {
+
+type TableFormLabelsItemType = {
     label: string,
-    key: string,
+    key: string | string[],
     is: string,
     bind?: any,
     value?:any
@@ -13,14 +14,15 @@ type TableFormItemType = {
 
 export type TableParamsType = {
     form?: {
-        labels: TableFormItemType[],
-        option: {
+        labels?: TableFormLabelsItemType[],
+        'v-slots'?: Record<string, ()=>any>,
+        option?: {
             search?: boolean,
             reset?: boolean,
             export?: boolean,
         },
     },
-    table: {
+    table?: {
         'v-slots'?:any
         enableSelection?: boolean
         columns: TableColumnType[]
@@ -52,7 +54,7 @@ let dateRange = defineComponent({
             required:true
         },
         item:{
-            type:Object as ()=>TableFormItemType,
+            type:Object as ()=>TableFormLabelsItemType,
             required:true
         },
       
@@ -87,25 +89,28 @@ let dateRange = defineComponent({
 }) 
 
 
-const FormItems:Record<string, (form: any, item: TableFormItemType) => any> = {
-    input: (form: any, item: TableFormItemType) => {
+const FormItems:Record<string, (form: any, item: TableFormLabelsItemType) => any> = {
+    input: (form: any, item: TableFormLabelsItemType) => {
         let {t:$t} = useI18n()
-        return <AInput size="middle" v-model:value={form[item.key]} placeholder={$t(`请输入{label}`,{label:$t(item.label)})}></AInput>
+        return <AInput size="middle" v-model:value={form[item.key as string]} placeholder={$t(`请输入{label}`,{label:$t(item.label)})}></AInput>
     },
-    select: (form: any, item: TableFormItemType) => {
+    numberRange: (form: any, item: TableFormLabelsItemType) => { 
         let {t:$t} = useI18n()
-        return <ASelect allowClear  {...item.bind}  class="min-w-[150px]" v-model:value={form[item.key]} options={item.bind?.options} placeholder={$t(`请选择{label}`,{label:$t(item.label)})}></ASelect>
+        return <div class="flex items-center">
+                <AInputNumber class="!min-w-[150px]" v-model:value={form[item.key[0] as string]} placeholder={$t(`请输入{label}开始`,{label:$t(item.label)})}></AInputNumber>
+                <span class="px-1">-</span>
+                <AInputNumber class="!min-w-[150px]" v-model:value={form[item.key[1] as string]} placeholder={$t(`请输入{label}结束`,{label:$t(item.label)})}></AInputNumber>
+        </div>
     },
-    selectTenant: (form: any, item: TableFormItemType) => { 
-        let { t: $t } = useI18n()
-        watch(Const.TenantSelectList(), (nv) => { 
-            console.log(nv)
-        }, {
-            once: true
-        })
-        return <ASelect allowClear class="min-w-[150px]" v-model:value={form[item.key]} options={Const.TenantSelectList().value} placeholder={$t(`请选择{label}`,{label:$t(item.label)})}></ASelect>
+    select: (form: any, item: TableFormLabelsItemType) => {
+        let {t:$t} = useI18n()
+        return <ASelect allowClear  {...item.bind}  class="min-w-[150px]" v-model:value={form[item.key as string]} options={item.bind?.options} placeholder={$t(`请选择{label}`,{label:$t(item.label)})}></ASelect>
     },
-    dateRange:(form:any,item:TableFormItemType)=>{
+    switch: (form: any, item: TableFormLabelsItemType) => {
+        let {t:$t} = useI18n()
+        return <ASwitch allowClear  {...item.bind}  class="min-w-[150px]" v-model:value={form[item.key as string]} options={item.bind?.options} placeholder={$t(`请选择{label}`,{label:$t(item.label)})}></ASwitch>
+    },
+    dateRange:(form:any,item:TableFormLabelsItemType)=>{
         return h(dateRange,{form,item})
     }
 }
@@ -159,7 +164,7 @@ export default defineComponent({
 
         //form 初始化
         const form = ref<any>({})
-        props.form?.labels.forEach((item) => {
+        props.form?.labels?.forEach((item) => {
             
             if (Array.isArray(item.key)) {
                 item.key.forEach((key,index) => {
@@ -229,7 +234,7 @@ export default defineComponent({
             <div class="flex flex-col gap-2 h-full  ">
                 {/* {JSON.stringify(form.value)} */}
                 {props.form?.labels&&<AForm layout="inline gap-2">
-                    {props.form?.labels?.map((item: TableFormItemType) => {
+                    {props.form?.labels?.map((item: TableFormLabelsItemType) => {
                         return (
                             <AFormItem label={$t(item.label)}>
                                 {FormItems[item.is]?.(form.value,item)}
@@ -239,8 +244,12 @@ export default defineComponent({
                     <div class="flex gap-2">
                         {props.form?.option?.search !== false && <AButton type="primary" onClick={()=>tableData.load()}>{$t('搜索')}</AButton>}
                         {props.form?.option?.reset  !== false && <AButton onClick={() => patch(metaForm,form.value,true)}>{$t('重置')}</AButton>}
-                        {props.form?.option?.export !== false && <AButton type="primary">{$t('导出')}</AButton>}
+                        {props.form?.option?.export === true && <AButton type="primary">{$t('导出')}</AButton>}
                     </div> 
+
+                    <div class="flex ml-auto">
+                        {props.form['v-slots']?.extra?.()}
+                    </div>
                 </AForm>}
                 {slots.center?.()}
                 <div class="flex-1 relative overflow-scroll flex flex-col">
