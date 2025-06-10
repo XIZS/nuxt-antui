@@ -6,6 +6,7 @@ export const useRouteInfo = (menuItems: any[]) =>
             names: [] as string[],
             paths: [] as string[],
         })
+        console.log(menuItems)
 
         const route = useRoute()
 

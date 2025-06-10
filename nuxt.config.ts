@@ -21,9 +21,16 @@ export default defineNuxtConfig({
   i18n: {
     defaultLocale: 'zh',
     strategy: 'no_prefix',
+     compilation: {
+      strictMessage: false,
+      escapeHtml: true,
+    },
+     bundle: {
+    optimizeTranslationDirective: false
+  },
     locales: [
-      { code: 'en', name: 'English', file: 'en.json' },
-      { code: 'zh', name: '中文', file: 'zh.json' }
+      { code: 'en_US', name: 'English', file: 'en_US.json' },
+      { code: 'zh_CN', name: '中文', file: 'zh_CN.json' }
     ]
   }
 })
