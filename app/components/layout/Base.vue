@@ -50,9 +50,9 @@
                                         <a-menu-item v-for="item in props.adminMenu" @click="item.click">
                                             {{ item.name }}
                                         </a-menu-item>
-                                        <a-menu-item @click="()=>singOut()">
+                                        <!-- <a-menu-item @click="()=>singOut()">
                                             <a href="javascript:;">{{$t('退出')}}</a>
-                                        </a-menu-item>
+                                        </a-menu-item> -->
                                     </a-menu>
                                 </template>
                             </a-dropdown>
