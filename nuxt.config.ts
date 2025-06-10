@@ -19,7 +19,7 @@ export default defineNuxtConfig({
     plugins: [tailwindcss()],
   },
   i18n: {
-    defaultLocale: 'zh',
+    defaultLocale: 'zh_CN',
     strategy: 'no_prefix',
      compilation: {
       strictMessage: false,
