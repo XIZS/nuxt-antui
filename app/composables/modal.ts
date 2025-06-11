@@ -14,7 +14,7 @@ export const NormalModal = (el) => {
             control.close = () => {
                 open.value = false
             }
-            return () => h(AConfigProvider, { locale: useAntLocale().value }, [
+            return () => h(AConfigProvider, { locale: useAntLocale.value }, [
                 h(el, {
                     open: open.value, // 等价于 v-model:open
                     'onUpdate:open': (val: boolean) => {
