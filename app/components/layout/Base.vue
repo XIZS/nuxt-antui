@@ -6,7 +6,7 @@
         collapsed-width="0"
         width="220px"
         :trigger="null"
-        class="overflow-scroll"
+        class="overflow-scroll scrollbar-none"
       >
         <div class="text-center text-white p-2 text-lg  " >
             {{props.title}}
