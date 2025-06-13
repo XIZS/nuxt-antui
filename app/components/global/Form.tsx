@@ -1,4 +1,4 @@
-import { AForm, AFormItem, AInput, ASelect,AInputNumber, LineOutlined, ASwitch, ATextarea, ARadio, ARadioGroup, AButton } from "#components"
+import { AForm, AFormItem, AInput, ASelect,AInputNumber, LineOutlined, ASwitch, ATextarea, ARadio, ARadioGroup, AButton, AInputPassword } from "#components"
 
 export type FormItemType = {
     label:string,
@@ -22,6 +22,9 @@ export const FormComs:{
   }= {
     input:(form:any,item:FormItemType)=>{
         return <AInput v-model:value={form[item.key as string]}></AInput>
+    },
+    password:(form:any,item:FormItemType)=>{
+        return <AInputPassword v-model:value={form[item.key as string]}></AInputPassword>
     },
     button:(form:any,item:FormItemType)=>{
         console.log(item.bind)
