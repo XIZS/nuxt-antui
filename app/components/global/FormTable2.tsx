@@ -219,6 +219,10 @@ export default defineComponent({
             return res.list
         },[])
 
+        watch(()=>tableData.loading,(nv)=>{
+            props.attribute.loading = nv
+        })
+
 
         const rowSelection = { 
             selectedRowKeys: props.attribute?.selectKeys, 
@@ -255,16 +259,15 @@ export default defineComponent({
                 <div class="flex-1 relative overflow-scroll flex flex-col">
                     {slots.content?.(tableData.value) ??< div class="absolute inset-0 ">
                             <ATable
+                                bordered
                                 row-selection={props.table.enableSelection ? rowSelection : null}
                                 rowKey={props.table.rowKey ?? ((row) => row.id)}
                                 loading={tableData.loading}
-                                scroll={{ x: true,}}
                                 columns={props.table.columns}
                                 pagination={false}
-                                sticky={tableData.value.length>0}
                                 v-slots={{
                                     headerCell: ({ title, column }: any) => (
-                                        <div style={{ 'white-space': 'nowrap' }}>
+                                        <div style={{ 'white-space': 'nowrap',}}>
                                             {title}
                                         </div>
                                     ),
@@ -272,7 +275,7 @@ export default defineComponent({
                                         if (row.column?.customRender != null) {
                                             return row.column.customRender(row)
                                         }
-                                        return <div class="whitespace-nowrap" style={{ width: row.column.width ?? '100px' }}>{row.text}</div>
+                                        return <div class="whitespace-nowrap" >{row.text}</div>
                                     },
                                     ...props.table['v-slots']
                                 }}

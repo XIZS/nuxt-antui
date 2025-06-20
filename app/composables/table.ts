@@ -31,6 +31,7 @@ export const FormTable2 = (props: TableParamsType) => {
     const attribute = reactive({
         selectItems: [],
         selectKeys: [],
+        loading:false,
         page: 1,
         pageSize: 10,
         tableData: [],
