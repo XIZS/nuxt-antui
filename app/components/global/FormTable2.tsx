@@ -9,7 +9,8 @@ type TableFormLabelsItemType = {
     key: string | string[],
     is: string,
     bind?: any,
-    value?:any
+    value?:any,
+    filter?:()=>boolean
 }
 
 export type TableParamsType = {
@@ -42,6 +43,7 @@ export type AttributeType = {
     selectKeys:any[],
     page:number,
     pageSize: number,
+    reqData:any,
     tableData: any[],
     metaTableData:any[],
     form:any
@@ -164,7 +166,7 @@ export default defineComponent({
 
         //form 初始化
         const form = ref<any>({})
-        props.form?.labels?.forEach((item) => {
+        props.form?.labels?.filter(item=>item.filter==null||item.filter(item)).forEach((item) => {
             
             if (Array.isArray(item.key)) {
                 item.key.forEach((key,index) => {
@@ -214,6 +216,7 @@ export default defineComponent({
             pagination.total = res.meta.pagination.total
             pagination.pageSize = res.meta.pagination.per_page
             pagination.page = res.meta.pagination.current_page
+            props.attribute.reqData = res
             props.attribute.metaTableData = JSON.parse(JSON.stringify(res.list))
             props.attribute.tableData = res.list
             return res.list
@@ -248,7 +251,9 @@ export default defineComponent({
                     <div class="flex gap-2">
                         {props.form?.option?.search !== false && <AButton type="primary" onClick={()=>tableData.load()}>{$t('搜索')}</AButton>}
                         {props.form?.option?.reset  !== false && <AButton onClick={() => patch(metaForm,form.value,true)}>{$t('重置')}</AButton>}
-                        {props.form?.option?.export === true && <AButton type="primary">{$t('导出')}</AButton>}
+                        {props.form?.option?.export === true && <AButton type="primary" onClick={()=>{
+                            props.form.export?.(form.value)
+                        }}>{$t('导出')}</AButton>}
                     </div> 
 
                     <div class="flex ml-auto">
@@ -266,11 +271,14 @@ export default defineComponent({
                                 columns={props.table.columns}
                                 pagination={false}
                                 v-slots={{
-                                    headerCell: ({ title, column }: any) => (
-                                        <div style={{ 'white-space': 'nowrap',}}>
-                                            {title}
+                                    headerCell: (row) => {
+                                        if (row.column?.customHeaderCell != null) {
+                                            return row.column.customHeaderCell()
+                                        }
+                                        return <div style={{ 'white-space': 'nowrap',}}>
+                                            {row.title}
                                         </div>
-                                    ),
+                                    },
                                     bodyCell: (row: any) => {
                                         if (row.column?.customRender != null) {
                                             return row.column.customRender(row)
