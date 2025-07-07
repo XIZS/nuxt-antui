@@ -107,7 +107,7 @@ export class Form {
                 typeof item.is === 'function'
                   ? item.is(formData.value)
                   : Form.FormComs[item.is]?.(formData.value, item)
-
+              console.log(node,item.is,Form.FormComs)
               if (item.label == null) return node
 
               return (
