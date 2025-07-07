@@ -15,7 +15,7 @@
     "@ant-design-vue/nuxt": "1.4.6",
     "@nuxtjs/i18n": "9.5.4",
     "@tailwindcss/vite": "^4.1.3",
-    "@xizs/nuxt-base": "0.0.4",
+    "@xizs/nuxt-base": "0.0.5",
     "ant-design-vue": ">=4",
     "nuxt": "^3.16.2",
     "tailwindcss": "^4.0.14",

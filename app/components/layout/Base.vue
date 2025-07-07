@@ -68,7 +68,7 @@
             </div>
         </div> -->
         <a-layout-content :style="{ }" class="relative   m-4">
-            <div class="absolute top-0 left-0 right-0 bottom-0 overflow-scroll">
+            <div class="absolute top-0 left-0 right-0 bottom-0 overflow-scroll scrollbar-hide">
                 <slot ></slot>
             </div>
         </a-layout-content>
