@@ -102,7 +102,7 @@ export class Form {
             label-col={{ span: 8 }}
             wrapper-col={{ span: 16 }}
           >
-            {props.form.map(item => {
+            {ADParse(props.form,formData.value).map(item => {
               const node =
                 typeof item.is === 'function'
                   ? item.is(formData.value)
