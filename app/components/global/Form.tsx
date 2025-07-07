@@ -66,7 +66,7 @@ export class Form {
         const formData = ref<Record<string, any>>({ ...props.defaultFormData })
         const rules = ref<Record<string, any>>({})
 
-        props.form.forEach(item => {
+        ADParse(props.form,formData.value).forEach(item => {
           if (item.key == null) return
           if (Array.isArray(item.key)) {
             item.key.forEach((key, idx) => {
