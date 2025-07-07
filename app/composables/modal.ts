@@ -1,6 +1,5 @@
-import { createVNode, render } from "vue"
-import Form from "../components/global/Form"
-import { AConfigProvider, AModal } from "#components"
+import { render } from "vue"
+import { AConfigProvider, AModal, Form } from "#components"
 
 import zhCN from 'ant-design-vue/es/locale/zh_CN';
 
