@@ -1,154 +1,135 @@
-import { AForm, AFormItem, AInput, ASelect,AInputNumber, LineOutlined, ASwitch, ATextarea, ARadio, ARadioGroup, AButton, AInputPassword } from "#components"
+import { AForm, AFormItem, AInput, ASelect, AInputNumber, LineOutlined, ASwitch, ATextarea, ARadioGroup, AButton, AInputPassword } from '#components'
 
 export type FormItemType = {
-    label:string,
-    key: string | string[],
-    value:any,
-    is:string,
-    bind:any,
-    rules:any[]
+  label: string,
+  key: string | string[],
+  value: any,
+  is: string | ((formData: any) => VNode),
+  bind: any,
+  rules: any[],
+  show?: boolean
 }
 
 export type FormPropsType = {
-    form:FormItemType[],
-    submit:(formData:any)=>{
-
-    },
-    showSubmit?:boolean
+  form: FormItemType[],
+  submit: (formData: any) => void,
+  showSubmit?: boolean,
+  defaultFormData?: Record<string, any>
 }
 
-export const FormComs:{
-    [key: string]: (form:any,item:FormItemType)=>VNode
-  }= {
-    input:(form:any,item:FormItemType)=>{
-        return <AInput v-model:value={form[item.key as string]}></AInput>
-    },
-    password:(form:any,item:FormItemType)=>{
-        return <AInputPassword v-model:value={form[item.key as string]}></AInputPassword>
-    },
-    button:(form:any,item:FormItemType)=>{
-        console.log(item.bind)
-        return <AButton {...item.bind}>{ item.bind.content}</AButton>
-    },
-    textarea:(form:any,item:FormItemType)=>{
-        return <ATextarea v-model:value={form[item.key as string]}></ATextarea>
-    },
-    inputNumber:(form:any,item:FormItemType)=>{
-        return <AInputNumber v-model:value={form[item.key as string]} {...item.bind}></AInputNumber>
-    },
-    inputNumberRange:(form:any,item:FormItemType)=>{
-        return <div class="flex items-center gap-2">
-            <AInputNumber class="flex-1" v-model:value={form[item.key[0] as string]} {...item.bind[0]}></AInputNumber>
-            <LineOutlined />
-            <AInputNumber class="flex-1" v-model:value={form[item.key[1] as string]} {...item.bind[1]}></AInputNumber>
-        </div>
-    },
-    select:(form:any,item:FormItemType)=>{
-        return <ASelect v-model:value={form[item.key as string]} options={item.bind.options}></ASelect>
-    },
-    switch:(form:any,item:FormItemType)=>{
-        return <ASwitch v-model:checked={form[item.key as string]} {...item.bind}></ASwitch>
-    },
-    radio: (form: any, item: FormItemType) => {
-        return <ARadioGroup v-model:value={form[item.key as string]} {...item.bind}></ARadioGroup>
-    },
+export class Form {
+  static FormComs: Record<string, (form: any, item: FormItemType) => VNode> = {
+    input: (form, item) => <AInput v-model:value={form[item.key as string]} />,
+    password: (form, item) => <AInputPassword v-model:value={form[item.key as string]} />,
+    button: (form, item) => <AButton {...item.bind}>{item.bind?.content}</AButton>,
+    textarea: (form, item) => <ATextarea v-model:value={form[item.key as string]} />,
+    inputNumber: (form, item) => <AInputNumber v-model:value={form[item.key as string]} {...item.bind} />,
+    inputNumberRange: (form, item) => (
+      <div class="flex items-center gap-2">
+        <AInputNumber class="flex-1" v-model:value={form[item.key[0] as string]} {...item.bind[0]} />
+        <LineOutlined />
+        <AInputNumber class="flex-1" v-model:value={form[item.key[1] as string]} {...item.bind[1]} />
+      </div>
+    ),
+    select: (form, item) => <ASelect v-model:value={form[item.key as string]} options={item.bind.options} />,
+    switch: (form, item) => <ASwitch v-model:checked={form[item.key as string]} {...item.bind} />,
+    radio: (form, item) => <ARadioGroup v-model:value={form[item.key as string]} {...item.bind} />
+  }
 
-}
+  static addFormCom(name: string, comp: (form: any, item: FormItemType) => VNode) {
+    Form.FormComs[name] = comp
+  }
 
-export default defineComponent({
-    props:{
-        // form: Array as () => FormType[],
-        // action: Array as () => JSX.Element[],
-        // table: Object as () => FormTableProps<any>["table"],
-        // control: Object
-        form:{
-            type:Array as ()=>FormPropsType['form'],
-            required:true
+  static createComponent() {
+    return defineComponent({
+      props: {
+        form: {
+          type: Array as () => FormPropsType['form'],
+          required: true
         },
-        submit:{
-            type:Function  as FormPropsType['submit'],
-            required:true
+        submit: {
+          type: Function as unknown as () => FormPropsType['submit'],
+          required: true
         },
-        showSubmit:{
-            type:Boolean,
-            default:true
+        showSubmit: {
+          type: Boolean,
+          default: true
         },
         defaultFormData: {
-            type: Object,
-            default: () => ({})
+          type: Object,
+          default: () => ({})
         }
-    },
-    setup(props, { expose }) {
-        
-        const {t:$t} = useI18n()
+      },
+      setup(props, { expose }) {
+        const { t: $t } = useI18n()
+        const thisRef = ref()
+        const formData = ref<Record<string, any>>({ ...props.defaultFormData })
+        const rules = ref<Record<string, any>>({})
 
-        let thisRef = ref(null)
-        let formData = ref(props.defaultFormData) 
-        let rules = ref({})
-        ADParse(props.form,formData.value).forEach(item=>{
-            if(item.key==null) return
-            if(Array.isArray(item.key)){
-                item.key.forEach(key=>{
-                    formData.value[key] = item.value??''
-                    rules.value[item.key] = item.rules??[]   
-                    
-                })
-            }else{
-                formData.value[item.key] = item.value??''
-                rules.value[item.key] = item.rules??[]   
-            }
-
-            // if(Array.isArray(item.rules)){
-            //     item.rules.forEach(rule=>{
-            //         rules.value
-            //     })
-            // }
-            // rules.value[item.key] = item.rules??[]   
+        props.form.forEach(item => {
+          if (item.key == null) return
+          if (Array.isArray(item.key)) {
+            item.key.forEach((key, idx) => {
+              formData.value[key] = item.value?.[idx] ?? ''
+              rules.value[key] = item.rules ?? []
+            })
+          } else {
+            formData.value[item.key] = item.value ?? ''
+            rules.value[item.key] = item.rules ?? []
+          }
         })
 
-        let loading = ref(false)
-        let submit = async ()=>{
-            if(loading.value){
-                throw new Error('loading')
-            }
-            loading.value = true
-            try{
-                await thisRef.value.validate()
-                await props.submit(formData.value)
-            }finally{
-                loading.value = false
-            }
+        const loading = ref(false)
+
+        const submit = async () => {
+          if (loading.value) throw new Error('loading')
+          loading.value = true
+          try {
+            await thisRef.value.validate()
+            await props.submit(formData.value)
+          } finally {
+            loading.value = false
+          }
         }
 
-        expose({
-            submit,
-            loading
-        })
-        
+        expose({ submit, loading })
+
+        return () => (
+          <AForm
+            ref={thisRef}
+            model={formData.value}
+            rules={rules.value}
+            label-col={{ span: 8 }}
+            wrapper-col={{ span: 16 }}
+          >
+            {props.form.map(item => {
+              const node =
+                typeof item.is === 'function'
+                  ? item.is(formData.value)
+                  : Form.FormComs[item.is]?.(formData.value, item)
+
+              if (item.label == null) return node
+
+              return (
+                <AFormItem
+                  key={Array.isArray(item.key) ? item.key.join(',') : item.key}
+                  name={item.key}
+                  {...item.bind}
+                  class={{ hidden: item.show === false }}
+                  v-slots={{
+                    label: () => <span class="whitespace-break-spaces">{$t(item.label)}</span>
+                  }}
+                >
+                  {node}
+                </AFormItem>
+              )
+            })}
+          </AForm>
+        )
+      }
+    })
+  }
+}
 
 
-        return ()=><AForm ref={thisRef} model={formData.value} rules={rules.value} label-col={{ span: 8 }} wrapper-col={{ span: 16 }}>
-            {/* {JSON.stringify(formData.value)} */}
-            {
-                ADParse(props.form, formData.value).map(item => {
-                    if (item.label == null) {
-                        return  typeof item.is === 'function'? item.is(formData.value) :
-                        FormComs[item.is](formData.value,item)
-                    }
-                    return <AFormItem
-                        key={item.key} name={item.key} {...item.bind} class={{ 'hidden': item.show === false }}
-                        v-slots={{
-                            label:()=><span class="whitespace-break-spaces">{$t(item.label)}</span>
-                        }}
-                    >
-                        {
-                            typeof item.is === 'function'? item.is(formData.value) :
-                            FormComs[item.is](formData.value,item)
-                        }
-                    </AFormItem>
-                })
-            }
-
-        </AForm>
-    }
-})
+export default Form.createComponent()

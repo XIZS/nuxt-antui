@@ -4,6 +4,7 @@
         <a-config-provider componentSize="middle" :locale="useAntLocale">
             <NuxtPage></NuxtPage>
         </a-config-provider>
+
     </NuxtLayout>
 </template>
 
