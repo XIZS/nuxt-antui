@@ -92,7 +92,7 @@ export class Form {
           }
         }
 
-        expose({ submit, loading })
+        expose({ submit, loading,formData })
 
         return () => (
           <AForm

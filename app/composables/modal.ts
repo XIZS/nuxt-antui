@@ -59,44 +59,47 @@ export const FormModal = (params: FormModalParamsType) => {
     let submit: () => void
 
 
-    let control = NormalModal(h(defineComponent({
-        setup() {
-            const { t: $t } = useI18n()
-            let formRef = ref(null)
-            let loading = ref(false)
+    return new Promise((resolve, reject) => {
+        let control = NormalModal(h(defineComponent({
+            setup() {
+                const { t: $t } = useI18n()
+                let formRef = ref(null)
+                let loading = ref(false)
 
-            onMounted(() => {
-                submit = async () => {
-                    loading.value = true
-                    try {
-                        await formRef.value.submit()
-                    } finally {
+                onMounted(() => {
+                    submit = async () => {
+                        loading.value = true
+                        try {
+                            await formRef.value.submit()
+                        } finally {
 
-                        loading.value = false
+                            loading.value = false
+                        }
                     }
-                }
-                // loading = formRef.value.loading
-            })
+                    // loading = formRef.value.loading
+                    resolve({...formRef.value})
+                })
 
-            return () => h(AModal, {
-                title: $t(params.title),
-                width: params.width,
-                okText: $t('提交'),
-                cancelText: $t('取消'),
-                confirmLoading: loading.value,
-                onOk: async () => {
-                    await submit()
-                    control.close()
-                }
-            }, h(Form, {
-                ref: formRef,
-                form: params.form,
-                defaultFormData: params.defaultFormData,
-                submit: params.submit,
-                showSubmit: false
-            }))
-        }
-    })))
+                return () => h(AModal, {
+                    title: $t(params.title),
+                    width: params.width,
+                    okText: $t('提交'),
+                    cancelText: $t('取消'),
+                    confirmLoading: loading.value,
+                    onOk: async () => {
+                        await submit()
+                        control.close()
+                    }
+                }, h(Form, {
+                    ref: formRef,
+                    form: params.form,
+                    defaultFormData: params.defaultFormData,
+                    submit: params.submit,
+                    showSubmit: false
+                }))
+            }
+        })))
+    })
 }
 
 export const MModal = {
