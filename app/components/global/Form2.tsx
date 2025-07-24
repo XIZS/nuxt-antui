@@ -20,7 +20,7 @@ export type FormPropsType = {
 export class Form2 {
     static FormComs: Record<string, any> ={
         input:(form:any,item:FormItemType)=>{
-            return <AInput v-model:value={form[item.key as string]}></AInput>
+            return <AInput v-model:value={form[item.key as string]} {...item.bind}></AInput>
         },
         password:(form:any,item:FormItemType)=>{
             return <AInputPassword v-model:value={form[item.key as string]}></AInputPassword>

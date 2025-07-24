@@ -14,6 +14,8 @@
     "确认删除该条数据吗？":"Are you sure you want to delete this data?",
     "确定":"Confirm",
     "取消":"Cancel",
+    "请输入{label}开始":"请输入{label}开始",
+    "请输入{label}结束":"请输入{label}结束",
 
     "":""
 }
