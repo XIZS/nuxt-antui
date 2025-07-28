@@ -212,7 +212,6 @@ export default defineComponent({
                     } 
                 }
             }
-            console.log(res)
             pagination.total = res.meta.pagination.total
             pagination.pageSize = res.meta.pagination.per_page||res.meta.pagination.perPage
             pagination.page = res.meta.pagination.current_page||res.meta.pagination.currentPage
@@ -299,9 +298,10 @@ export default defineComponent({
                     </div>
                     <div class="flex items-center gap-2">
                         <APagination 
-                            hideOnSinglePage={true}
+                            hideOnSinglePage={pagination.total==0}
                             v-model:current={pagination.page}
                             total={pagination.total} 
+                            showSizeChanger={true}
                             pageSize={pagination.pageSize}
                             onChange={(page) => {
                                 pagination.page = page
@@ -313,7 +313,11 @@ export default defineComponent({
                                 pagination.page = 1
                                 tableData.load()
                             }}
+                            showTotal={()=>{
+                                return `${$t(`共{a}页,{b}条数据`,{a:Math.ceil(pagination.total/pagination.pageSize),b:pagination.total})}`
+                            }}
                         />
+
                         <AButton icon={h(RedoOutlined)} loading={tableData.loading} onClick={tableData.load}  />
                     </div>
                 </div>}

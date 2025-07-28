@@ -19,7 +19,7 @@ export type FormPropsType = {
 
 export class Form {
   static FormComs: Record<string, (form: any, item: FormItemType) => VNode> = {
-    input: (form, item) => <AInput v-model:value={form[item.key as string]} />,
+    input: (form, item) => <AInput v-model:value={form[item.key as string]} {...item.bind} />,
     password: (form, item) => <AInputPassword v-model:value={form[item.key as string]} />,
     button: (form, item) => <AButton {...item.bind}>{item.bind?.content}</AButton>,
     textarea: (form, item) => <ATextarea v-model:value={form[item.key as string]} />,
