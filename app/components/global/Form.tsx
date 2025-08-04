@@ -99,8 +99,8 @@ export class Form {
             ref={thisRef}
             model={formData.value}
             rules={rules.value}
-            label-col={{ span: 8 }}
-            wrapper-col={{ span: 16 }}
+            label-col={{ span: 6 }}
+            wrapper-col={{ span: 18 }}
           >
             {ADParse(props.form,formData.value).map(item => {
               const node =
