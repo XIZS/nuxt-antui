@@ -10,6 +10,12 @@ export const Drawer = (el) => {
             console.log('aaaaaa')
             control.close = () => {
                 open.value = false
+                setTimeout(() => {
+                    render(null, container) // 卸载组件
+                    if (container.parentNode) {
+                        container.parentNode.removeChild(container) // 移除 DOM
+                    }
+                }, 1000);
             }
             return () => h(el, {
                 open: open.value, // 等价于 v-model:open

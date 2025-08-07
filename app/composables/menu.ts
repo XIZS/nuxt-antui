@@ -9,6 +9,7 @@ export const useRouteInfo = (menuItems: any[]) =>
         console.log(menuItems)
 
         const route = useRoute()
+        console.log(route)
 
         const findPath = (
             items: any[],
@@ -34,7 +35,11 @@ export const useRouteInfo = (menuItems: any[]) =>
         watch(
             () => route.fullPath,
             () => {
-                const match = findPath(menuItems, route.path)
+                let path = route.path
+                if (path.endsWith('/')) {
+                    path = path.slice(0, -1)
+                }
+                const match = findPath(menuItems, path)
                 if (match) {
                     info.value = {
                         name: match.titles.at(-1) || '',
