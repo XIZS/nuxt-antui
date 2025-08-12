@@ -68,6 +68,13 @@ const items = computed(()=>{
 
 let routeInfo = useRouteInfo(props.items)
 
+watch(routeInfo, (newVal, oldVal) => {
+    if (newVal && newVal.paths) {
+        state.selectedKeys = newVal.paths
+        state.openKeys = newVal.paths
+    }
+})
+
 onMounted(()=>{
     state.selectedKeys=routeInfo?.value?.paths
     state.openKeys=routeInfo?.value?.paths

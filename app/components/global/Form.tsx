@@ -70,11 +70,11 @@ export class Form {
           if (item.key == null) return
           if (Array.isArray(item.key)) {
             item.key.forEach((key, idx) => {
-              formData.value[key] = item.value?.[idx] ?? ''
+              formData.value[key] = formData.value[key]??item.value?.[idx] ?? ''
               rules.value[key] = item.rules ?? []
             })
           } else {
-            formData.value[item.key] = item.value ?? ''
+            formData.value[item.key] =formData.value[item.key]??  item.value ?? ''
             rules.value[item.key] = item.rules ?? []
           }
         })
@@ -107,7 +107,7 @@ export class Form {
                 typeof item.is === 'function'
                   ? item.is(formData.value)
                   : Form.FormComs[item.is]?.(formData.value, item)
-              console.log(node,item.is,Form.FormComs)
+              // console.log(node,item.is,Form.FormComs)
               if (item.label == null) return node
 
               return (
