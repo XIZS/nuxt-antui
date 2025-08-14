@@ -34,7 +34,7 @@ const state = reactive({
     preOpenKeys: ['sub1'],
 });
 
-const { $t } = useI18n()
+const { t:$t } = useI18n()
 
 const items = computed(()=>{
     let a = props.items.map((item) => {
