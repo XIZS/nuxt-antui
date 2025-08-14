@@ -14,6 +14,9 @@
     "确认删除该条数据吗？":"确认删除该条数据吗？",
     "确定":"确定",
     "取消":"取消",
+    "请输入{label}开始":"Sila masukkan {label} untuk bermula",
+    "请输入{label}结束":"Sila masukkan {label} untuk tamat",
+    "共{a}页,{b}条数据":"Jumlah {a} halaman, {b} rekod",
 
     "":""
 }

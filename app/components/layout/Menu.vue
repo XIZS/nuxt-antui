@@ -34,26 +34,28 @@ const state = reactive({
     preOpenKeys: ['sub1'],
 });
 
+const { $t } = useI18n()
+
 const items = computed(()=>{
     let a = props.items.map((item) => {
         const { icon, title, path, children } = item;
         let newItem =  {
             key: path,
             icon: icon,
-            label: title,
+            label: $t(title),
           
         };
         if(children){
             newItem.children=children?.map((child) =>{
                 let c = {
                     key: child.path,
-                    label: child.title,
+                    label: $t(child.title),
                 }
                 if(child.children){
                     c.children=child.children?.map((subChild) =>{
                         return {
                             key: subChild.path,
-                            label: subChild.title,
+                            label: $t(subChild.title),
                         }
                     })
                 }
