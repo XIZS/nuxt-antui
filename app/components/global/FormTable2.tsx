@@ -64,7 +64,7 @@ let dateRange = defineComponent({
     setup(props) {
         let {t:$t} = useI18n()
       
-        let value = watchRef(ref([]),(nv,ov)=>{
+        let value = watchRef(ref(props.item.value?[dayjs(props.item.value[0]),dayjs(props.item.value[1])]:[]),(nv,ov)=>{
             if(nv?.length>0){
                 props.form[props.item.key[0] as string] = dayjs(nv[0]).format('YYYY-MM-DD')
                 props.form[props.item.key[1] as string] = dayjs(nv[1]).format('YYYY-MM-DD')

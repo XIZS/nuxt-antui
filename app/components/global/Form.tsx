@@ -1,4 +1,5 @@
 import { AForm, AFormItem, AInput, ASelect, AInputNumber, LineOutlined, ASwitch, ATextarea, ARadioGroup, AButton, AInputPassword } from '#components'
+import { defineComponent } from 'vue'
 
 export type FormItemType = {
   label: string,
