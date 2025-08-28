@@ -194,6 +194,8 @@ export default defineComponent({
             total:10
         })
 
+        let exportLoading = ref(false)
+
 
         let _isInitLoad = props.isInitLoad
         const tableData = asyncReactive<any[]>(async () => {
@@ -253,17 +255,14 @@ export default defineComponent({
                     <div class="flex gap-2">
                         {props.form?.option?.search !== false && <AButton type="primary" onClick={()=>tableData.load()}>{$t('搜索')}</AButton>}
                         {props.form?.option?.reset  !== false && <AButton onClick={() => patch(metaForm,form.value,true)}>{$t('重置')}</AButton>}
-                        {props.form?.option?.export === true && <AButton type="primary" onClick={()=>{
-                            // props.form.export?.(form.value)
+                        {props.form?.option?.export === true && <AButton type="primary" loading={exportLoading.value} onClick={()=>{
+                            exportLoading.value=true
                             exportExcel(props.title??'导出', props.table.columns,async (page,pageSize)=>{
                                 let res = await props.data?.({ ...form.value, ...{page,pageSize} })
                                 return res.list??res
-
-                                // let subName = subList.value.find(item => item.value == attribute?.form.subId)?.label
-                                // let res = await req.get('/system/live-record/variety/list', { query: {page,pageSize,...form.value} })
-                                // return res.list
+                            }).finally(()=>{
+                                exportLoading.value=false
                             })
-
                         }}>{$t('导出')}</AButton>}
                     </div> 
 
