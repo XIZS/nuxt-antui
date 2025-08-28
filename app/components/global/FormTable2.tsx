@@ -119,6 +119,9 @@ const FormItems:Record<string, (form: any, item: TableFormLabelsItemType) => any
 
 
 export const FormTableProps = {
+    title:{
+        type:String,
+    },
     form: {
       type: Object as () => TableParamsType['form'],
       required: false
@@ -251,7 +254,16 @@ export default defineComponent({
                         {props.form?.option?.search !== false && <AButton type="primary" onClick={()=>tableData.load()}>{$t('搜索')}</AButton>}
                         {props.form?.option?.reset  !== false && <AButton onClick={() => patch(metaForm,form.value,true)}>{$t('重置')}</AButton>}
                         {props.form?.option?.export === true && <AButton type="primary" onClick={()=>{
-                            props.form.export?.(form.value)
+                            // props.form.export?.(form.value)
+                            exportExcel(props.title??'导出', props.table.columns,async (page,pageSize)=>{
+                                let res = await props.data?.({ ...form.value, ...{page,pageSize} })
+                                return res.list??res
+
+                                // let subName = subList.value.find(item => item.value == attribute?.form.subId)?.label
+                                // let res = await req.get('/system/live-record/variety/list', { query: {page,pageSize,...form.value} })
+                                // return res.list
+                            })
+
                         }}>{$t('导出')}</AButton>}
                     </div> 
 
