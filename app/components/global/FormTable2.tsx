@@ -217,9 +217,9 @@ export default defineComponent({
                     } 
                 }
             }
-            pagination.total = res.meta?.pagination?.total
-            pagination.pageSize = res.meta?.pagination?.per_page||res.meta?.pagination?.perPage
-            pagination.page = res.meta?.pagination?.current_page||res.meta?.pagination?.currentPage
+            pagination.total = res.meta?.pagination?.total??0
+            pagination.pageSize = res.meta?.pagination?.per_page??res.meta?.pagination?.perPage??0
+            pagination.page = res.meta?.pagination?.current_page??res.meta?.pagination?.currentPage??1
             props.attribute.reqData = res
             props.attribute.metaTableData = JSON.parse(JSON.stringify(res.list))
             props.attribute.tableData = res.list
