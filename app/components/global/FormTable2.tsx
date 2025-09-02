@@ -15,7 +15,7 @@ type TableFormLabelsItemType = {
 
 export type TableParamsType = {
     form?: {
-        labels?: TableFormLabelsItemType[],
+        labels?: (TableFormLabelsItemType|(()=>any))[],
         'v-slots'?: Record<string, ()=>any>,
         option?: {
             search?: boolean,
@@ -170,7 +170,9 @@ export default defineComponent({
         //form 初始化
         const form = ref<any>({})
         props.form?.labels?.filter(item=>item.filter==null||item.filter(item)).forEach((item) => {
-            
+            if(typeof item =="function"){
+                item(form.value)
+            }
             if (Array.isArray(item.key)) {
                 item.key.forEach((key,index) => {
                     form.value[key] =  item.value?.[index]??''
@@ -246,6 +248,9 @@ export default defineComponent({
                 {/* {JSON.stringify(form.value)} */}
                 {props.form?.labels&&<AForm layout="inline gap-2">
                     {props.form?.labels?.map((item: TableFormLabelsItemType) => {
+                        if(typeof item =="function"){
+                            return item(form.value)
+                        }
                         return (
                             <AFormItem label={$t(item.label)}>
                                 {FormItems[item.is]?.(form.value,item)}
