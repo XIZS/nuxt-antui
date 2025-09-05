@@ -259,7 +259,10 @@ export default defineComponent({
                     })}
                     <div class="flex gap-2">
                         {props.form?.option?.search !== false && <AButton type="primary" onClick={()=>tableData.load()}>{$t('搜索')}</AButton>}
-                        {props.form?.option?.reset  !== false && <AButton onClick={() => patch(metaForm,form.value,true)}>{$t('重置')}</AButton>}
+                        {props.form?.option?.reset  !== false && <AButton onClick={() =>{
+                            patch(metaForm,form.value,true)
+                            tableData.load()
+                        }}>{$t('重置')}</AButton>}
                         {props.form?.option?.export === true && <AButton type="primary" loading={exportLoading.value} onClick={()=>{
                             exportLoading.value=true
                             exportExcel(props.title??'导出', props.table.columns,async (page,pageSize)=>{
