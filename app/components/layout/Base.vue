@@ -27,21 +27,23 @@
                     </div>
                     <div class=" flex items-center">
                         <slot name="header-right-extend"></slot>
-                        
-                        <div class="flex items-center p-2 ml-2">
-                            <a-dropdown >
-                                <div class=" cursor-pointer flex items-center">
-                                    <GlobalOutlined  class="text-[26px]" />
-                                </div>
-                                <template #overlay>
-                                    <a-menu>
-                                        <a-menu-item  v-for="locale in locales" @click="setLocale(locale.code)">
-                                            {{ locale.name }}
-                                        </a-menu-item>
-                                    </a-menu>
-                                </template>
-                            </a-dropdown>
-                        </div>
+                        <slot name="header-right-language">
+                            <div class="flex items-center p-2 ml-2">
+                                <a-dropdown >
+                                    <div class=" cursor-pointer flex items-center">
+                                        <GlobalOutlined  class="text-[26px]" />
+                                    </div>
+                                    <template #overlay>
+                                        <a-menu>
+                                            <a-menu-item  v-for="locale in locales" @click="setLocale(locale.code)">
+                                                {{ locale.name }}
+                                            </a-menu-item>
+                                        </a-menu>
+                                    </template>
+                                </a-dropdown>
+                            </div>
+                        </slot>
+
                         <div >
                             <a-dropdown >
                                 <div class="h-[30px] leading-[30px] cursor-pointer">{{ useAdmin().value?.username ?? 'Admin'}}</div>
