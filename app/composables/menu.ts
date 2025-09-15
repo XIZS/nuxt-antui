@@ -41,18 +41,9 @@ export const useRouteInfo = (menuItems: any[]) =>
                     path = path.slice(0, -1)
                 }
                 const match = findPath(menuItems, path)
-                // if (match) {
-                    info.value.name= match?.titles?.at(-1) ?? '',
-                    info.value.names= match?.titles??[],
-                    info.value.paths= match?.paths??[],
-                    // }
-                // } else {
-                //     info.value = {
-                //         name: '',
-                //         names: [],
-                //         paths: [],
-                //     }
-                // }
+                info.value.name= match?.titles?.at(-1) ?? ''
+                info.value.names= match?.titles??[]
+                info.value.paths= match?.paths??[]
             },
             { immediate: true }
         )
