@@ -36,23 +36,23 @@ export const useRouteInfo = (menuItems: any[]) =>
             () => route.fullPath,
             () => {
                 let path = route.path
+                console.log(path)
                 if (path.endsWith('/')) {
                     path = path.slice(0, -1)
                 }
                 const match = findPath(menuItems, path)
-                if (match) {
-                    info.value = {
-                        name: match.titles.at(-1) || '',
-                        names: match.titles,
-                        paths: match.paths,
-                    }
-                } else {
-                    info.value = {
-                        name: '',
-                        names: [],
-                        paths: [],
-                    }
-                }
+                // if (match) {
+                    info.value.name= match?.titles?.at(-1) ?? '',
+                    info.value.names= match?.titles??[],
+                    info.value.paths= match?.paths??[],
+                    // }
+                // } else {
+                //     info.value = {
+                //         name: '',
+                //         names: [],
+                //         paths: [],
+                //     }
+                // }
             },
             { immediate: true }
         )

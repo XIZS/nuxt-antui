@@ -120,7 +120,7 @@ const FormItems:Record<string, (form: any, item: TableFormLabelsItemType) => any
 
 export const FormTableProps = {
     title:{
-        type:String,
+        type:[String,Function]
     },
     form: {
       type: Object as () => TableParamsType['form'],
@@ -265,8 +265,13 @@ export default defineComponent({
                         }}>{$t('重置')}</AButton>}
                         {props.form?.option?.export === true && <AButton type="primary" loading={exportLoading.value} onClick={()=>{
                             exportLoading.value=true
-                            exportExcel(props.title??'导出', props.table.columns,async (page,pageSize)=>{
-                                let res = await props.data?.({ ...form.value, ...{page,pageSize} })
+
+                            let title = props.title
+                            if(typeof title =="function"){
+                                title = title()
+                            }
+                            exportExcel(title??'导出', props.table.columns,async (page,pageSize)=>{
+                                let res = await props.data?.({ ...form.value, ...{page,pageSize} },{isExport:true})
                                 return res.list??res
                             }).finally(()=>{
                                 exportLoading.value=false
