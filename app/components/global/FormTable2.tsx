@@ -241,12 +241,15 @@ export default defineComponent({
             } 
         }
 
-        props.control.refresh = (init:boolean = true)=>{
+        let refresh = (init:boolean = true)=>{
             if(init){
                 pagination.page=1
             }
+            console.log('pagination.',pagination)
             tableData.load()
         }
+
+         props.control.refresh = refresh
         
         
         return () => (
@@ -264,10 +267,10 @@ export default defineComponent({
                         )
                     })}
                     <div class="flex gap-2">
-                        {props.form?.option?.search !== false && <AButton type="primary" onClick={()=>tableData.load()}>{$t('搜索')}</AButton>}
+                        {props.form?.option?.search !== false && <AButton type="primary" onClick={()=>refresh()}>{$t('搜索')}</AButton>}
                         {props.form?.option?.reset  !== false && <AButton onClick={() =>{
                             patch(metaForm,form.value,true)
-                            tableData.load()
+                            refresh()
                         }}>{$t('重置')}</AButton>}
                         {props.form?.option?.export === true && <AButton type="primary" loading={exportLoading.value} onClick={()=>{
                             exportLoading.value=true
