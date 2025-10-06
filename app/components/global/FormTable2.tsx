@@ -241,7 +241,13 @@ export default defineComponent({
             } 
         }
 
-        props.control.refresh = ()=>tableData.load()
+        props.control.refresh = (init:boolean = true)=>{
+            if(init){
+                pagination.page=1
+            }
+            tableData.load()
+        }
+        
         
         return () => (
             <div class="flex flex-col gap-2 h-full  ">
