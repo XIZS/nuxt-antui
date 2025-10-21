@@ -32,7 +32,7 @@ export class Form {
         <AInputNumber class="flex-1" v-model:value={form[item.key[1] as string]} {...item.bind[1]} />
       </div>
     ),
-    select: (form, item) => <ASelect v-model:value={form[item.key as string]} options={item.bind.options} />,
+    select: (form, item) => <ASelect v-model:value={form[item.key as string]} options={item.bind.options} {...item.bind}/>,
     switch: (form, item) => <ASwitch v-model:checked={form[item.key as string]} {...item.bind} />,
     radio: (form, item) => <ARadioGroup v-model:value={form[item.key as string]} {...item.bind} />
   }
