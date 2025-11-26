@@ -86,7 +86,7 @@ let dateRange = defineComponent({
             { label: $t('最近30天'), value: [dayjs().add(-30, 'd'), dayjs()] },
         ]);
         
-        return ()=><ARangePicker presets={rangePresets.value} v-model:value={value.value}  />
+        return ()=><ARangePicker presets={rangePresets.value} v-model:value={value.value} {...props.item.bind} />
     }
 }) 
 
