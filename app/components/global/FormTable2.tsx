@@ -80,10 +80,10 @@ let dateRange = defineComponent({
             }
         })
         const rangePresets = ref([
-            { label: $t('今天'), value: [dayjs(), dayjs()] },
-            { label: $t('昨天'), value: [dayjs().add(-1, 'd'), dayjs().add(-1, 'd')] },
-            { label: $t('最近7天'), value: [dayjs().add(-7, 'd'), dayjs()] },
-            { label: $t('最近30天'), value: [dayjs().add(-30, 'd'), dayjs()] },
+            { label: $t('今天'), value: [dayjs().startOf('day'), dayjs().endOf('day')] },
+            { label: $t('昨天'), value: [dayjs().startOf('day').add(-1, 'd'), dayjs().endOf('day').add(-1, 'd')] },
+            { label: $t('最近7天'), value: [dayjs().startOf('day').add(-7, 'd'), dayjs().endOf('day')] },
+            { label: $t('最近30天'), value: [dayjs().startOf('day').add(-30, 'd'), dayjs().endOf('day')] },
         ]);
         
         return ()=><ARangePicker presets={rangePresets.value} v-model:value={value.value} {...props.item.bind} />
