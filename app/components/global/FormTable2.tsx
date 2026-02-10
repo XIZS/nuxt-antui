@@ -94,7 +94,7 @@ let dateRange = defineComponent({
 const FormItems:Record<string, (form: any, item: TableFormLabelsItemType) => any> = {
     input: (form: any, item: TableFormLabelsItemType) => {
         let {t:$t} = useI18n()
-        return <AInput size="middle" v-model:value={form[item.key as string]} placeholder={$t(`请输入{label}`,{label:$t(item.label)})}></AInput>
+        return <AInput size="middle" v-model:value={form[item.key as string]} placeholder={$t(`请输入{label}`,{label:$t(item.label)})} {...item.bind}></AInput>
     },
     numberRange: (form: any, item: TableFormLabelsItemType) => { 
         let {t:$t} = useI18n()
