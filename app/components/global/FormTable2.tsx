@@ -82,8 +82,8 @@ let dateRange = defineComponent({
         const rangePresets = ref([
             { label: $t('今天'), value: [dayjs().startOf('day'), dayjs().endOf('day')] },
             { label: $t('昨天'), value: [dayjs().startOf('day').add(-1, 'd'), dayjs().endOf('day').add(-1, 'd')] },
-            { label: '本月', value: () => [dayjs().startOf('month'), dayjs().endOf('month')] },
-            { label: '上月', value: () => [dayjs().subtract(1, 'month').startOf('month'), dayjs().subtract(1, 'month').endOf('month')] },
+            { label: '本月', value:[dayjs().startOf('month'), dayjs().endOf('month')] },
+            { label: '上月', value:[dayjs().subtract(1, 'month').startOf('month'), dayjs().subtract(1, 'month').endOf('month')] },
             { label: $t('最近7天'), value: [dayjs().startOf('day').add(-7, 'd'), dayjs().endOf('day')] },
             { label: $t('最近30天'), value: [dayjs().startOf('day').add(-30, 'd'), dayjs().endOf('day')] },
         ]);
